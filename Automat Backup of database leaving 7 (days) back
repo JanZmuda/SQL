@@ -1,0 +1,34 @@
+---*** Backup of database leaving 7 (days) backups back ***---
+
+	---*** Variable declaration ***---
+	DECLARE @DeleteDate NVARCHAR(50)
+	DECLARE @DeleteDateTime DATETIME
+	DECLARE @age_day int
+	DECLARE @extension NVARCHAR(10)
+	DECLARE @pathBackup varchar(255)
+
+	DECLARE @dbName varchar(255)
+	DECLARE @fileNameBackup nvarchar(max)
+	DECLARE @now varchar(50)
+
+		SET @pathBackup = 'Backup_destynation'
+		SET @extension = 'bak'
+		SET @age_day = 6
+		SET @DeleteDateTime = DateAdd(DAY, - @age_day, GetDate())
+		SET @DeleteDate = (Select Replace(Convert(nvarchar, @DeleteDateTime, 111), '/', '-') + 'T' + Convert(nvarchar, @DeleteDateTime, 108))
+
+		SET @dbName = 'db_backup_name'
+		SET @now = format(getdate(),'yyyyMMdd_HHmmssfff')
+
+		--*** Deleting backups older than 6 days ***---
+		@pathBackup,
+		@extension,
+		@DeleteDate,
+		1	
+
+	---*** Create new backu ***---
+   SET @fileNameBackup = @pathBackup  + @dbName+ '_' +  @now + '.BAK'   
+
+   BACKUP DATABASE @dbName TO DISK = @fileNameBackup  
+   WITH NOFORMAT, NOINIT,  NAME = N'dbname-Full Database Backup', SKIP, NOREWIND, NOUNLOAD,  STATS = 10
+
